@@ -9,12 +9,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class MultiSongDownloader_Queue {
+public class MasterSongDownloader {
 	ConcurrentLinkedQueue<String> spotifyLinkQueue = new ConcurrentLinkedQueue<String>();
 	ExecutorService executor;
 	String filepath;
 	int numDone = 0;
-	public MultiSongDownloader_Queue(String filepath, int maxConcurrentDownloads) {
+	public MasterSongDownloader(String filepath, int maxConcurrentDownloads) {
 		this.filepath = filepath;
 		executor = Executors.newFixedThreadPool(maxConcurrentDownloads);
 	}

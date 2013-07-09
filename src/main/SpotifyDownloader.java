@@ -2,7 +2,7 @@ package main;
 
 import java.io.IOException;
 
-import main.song_downloaders.MultiSongDownloader_Queue;
+import main.song_downloaders.MasterSongDownloader;
 import main.structures.MultipleTry;
 import main.structures.SongInfo;
 
@@ -65,9 +65,8 @@ public class SpotifyDownloader {
 //		md.download(song.artist + "-" + song.album + "-" + song.title + ".mp3"); 
 //		//TODO, this may lead to confusion when it is not right
 		
-		MultiSongDownloader_Queue sq = new MultiSongDownloader_Queue("/users/manu/desktop/spotifyLinks.txt", 10);
-		new Thread(sq).start();
-		
+		MasterSongDownloader msd = new MasterSongDownloader("/users/manu/desktop/spotifyLinks_small.txt", 10);
+		msd.startDownloadingAllSongs();
 	}
 	
 }
