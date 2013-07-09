@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-
 import main.SpotifyDownloader;
 import main.structures.SongInfo;
-//this will be the class that starts everything
+
+
 public class MultiSongDownloader_Queue implements Runnable {
 	ConcurrentLinkedQueue<String> spotifyLinkQueue = new ConcurrentLinkedQueue<String>();
 	ConcurrentLinkedQueue<String> failedSongs = new ConcurrentLinkedQueue<String>();
@@ -20,14 +19,15 @@ public class MultiSongDownloader_Queue implements Runnable {
 		this.maxConcurrentDownloads = maxConcurrentDownloads;
 		this.filepath = filepath;
 	}
-	public void successfullyDownloaded(SongInfo song) {
+	
+	public void successfulDownload(SongInfo song) {
 		numDone++;
 		System.out.print("("+numDone+"), ");
 		System.out.println("successfully downloaded: " + song);
 		currConcurrentDownloads--;
 		tryStartNewDownload();
 	}
-	public void failedDownloaded(String songString) {
+	public void failedDownload(String songString) {
 		numDone++;
 		System.out.print("("+numDone+"), ");
 		System.out.println("FAILED to download: " + songString);
@@ -35,6 +35,7 @@ public class MultiSongDownloader_Queue implements Runnable {
 		currConcurrentDownloads--;
 		tryStartNewDownload();
 	}
+	//this method is run when download is finished to start new download
 	public void tryStartNewDownload() {
 		while (currConcurrentDownloads < maxConcurrentDownloads && !this.spotifyLinkQueue.isEmpty()) { //changed from if to while to ensure, max num of threads
 			currConcurrentDownloads++;
@@ -42,7 +43,7 @@ public class MultiSongDownloader_Queue implements Runnable {
 			String spotifyURL = this.spotifyLinkQueue.poll();
 			song = SpotifyDownloader.getSongDataForSpotifyURLWithTries(3, spotifyURL);
 			if (song == null) {
-				failedDownloaded(spotifyURL);
+				failedDownload(spotifyURL);
 			}
 			else {
 				SingleSongDownloader md = new SingleSongDownloader_Concurrent(this, song);

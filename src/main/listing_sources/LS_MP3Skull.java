@@ -22,7 +22,7 @@ public class LS_MP3Skull extends ListingSource {
 	}
 
 	@Override
-	void generateDownloadListing() {
+	public void generateListings() {
 		String url = COMBINED_URL;
 		Document doc = null;
 		

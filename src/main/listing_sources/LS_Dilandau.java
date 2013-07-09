@@ -26,7 +26,7 @@ public class LS_Dilandau extends ListingSource {
 	}
 
 	@Override
-	void generateDownloadListing() {
+	public void generateListings() {
 		String url = COMBINED_URL;
 		Document doc = null;
 		

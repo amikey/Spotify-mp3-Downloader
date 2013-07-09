@@ -49,7 +49,7 @@ public class BinaryHeap<T extends Comparable<T>> {
     /**
      * Returns (but does not remove) the minimum element in the heap.
      */
-    public T peek() {
+    public T peek() throws IllegalStateException {
         if (this.isEmpty()) {
             throw new IllegalStateException();
         }

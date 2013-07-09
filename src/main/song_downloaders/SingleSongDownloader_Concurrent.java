@@ -10,10 +10,10 @@ public class SingleSongDownloader_Concurrent extends SingleSongDownloader {
 	}
 	@Override
 	public void run() {
-		start();
-		boolean success = download("music/" + song.artist + "-" + song.album + "-" + song.title + ".mp3");
-		if (success) sq.successfullyDownloaded(song);
-		else sq.failedDownloaded(song.toString());
+		populateListingSources();
+		boolean success = downloadSongToFile("music/" + song.artist + "-" + song.album + "-" + song.title + ".mp3");
+		if (success) sq.successfulDownload(song);
+		else sq.failedDownload(song.toString());
 	}
 
 }
