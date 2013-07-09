@@ -9,83 +9,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class MultiSongDownloader_Queue implements Runnable {
+public class MultiSongDownloader_Queue {
 	ConcurrentLinkedQueue<String> spotifyLinkQueue = new ConcurrentLinkedQueue<String>();
-	ConcurrentLinkedQueue<String> failedSongs = new ConcurrentLinkedQueue<String>();	
+	ExecutorService executor;
+	String filepath;
 	int numDone = 0;
-	String filepath;
-	int maxConcurrentDownloads;
-	int currConcurrentDownloads = 0;
 	public MultiSongDownloader_Queue(String filepath, int maxConcurrentDownloads) {
-		this.maxConcurrentDownloads = maxConcurrentDownloads;
 		this.filepath = filepath;
+		executor = Executors.newFixedThreadPool(maxConcurrentDownloads);
 	}
-	
-	public void successfulDownload(SongInfo song) {
-		numDone++;
-		System.out.print("("+numDone+"), ");
-		System.out.println("successfully downloaded: " + song);
-		currConcurrentDownloads--;
-		tryStartNewDownload();
-	}
-	public void failedDownload(String spotifyLink, SongInfo song) {
-		String songString = spotifyLink;
-		if (song != null) songString = songString + " -- " + song.toString();
-		numDone++;
-		System.out.print("("+numDone+"), ");
-		System.out.println("FAILED to download: " + songString);
-		failedSongs.offer(songString);
-		currConcurrentDownloads--;
-		tryStartNewDownload();
-	}
-	//this method is run when download is finished to start new download
-	public void tryStartNewDownload() {
-		while (currConcurrentDownloads < maxConcurrentDownloads && !this.spotifyLinkQueue.isEmpty()) { //changed from if to while to ensure, max num of threads
-			currConcurrentDownloads++;
-			String spotifyURL = this.spotifyLinkQueue.poll();
-			SingleSongDownloader md = new SingleSongDownloader_Concurrent(this, spotifyURL);
-			new Thread(md).start();
-		}
-		if (this.spotifyLinkQueue.isEmpty() && currConcurrentDownloads ==0) {
-			finishedAllDownloads();
-		}
-	}
-	public void finishedAllDownloads() {
-		System.out.println();
-		System.out.println();
-		System.out.println("COMPLETE");
-		System.out.println();
-		System.out.println("Songs that failed to download: ");
-		System.out.println(failedSongs);
-	}
-	@Override
-	public void run() {
-		Scanner scanner;
-		try {
-			scanner = new Scanner(new File(filepath));
-		} catch (FileNotFoundException e) {
-			return;
-		}
-		while(scanner.hasNextLine()) {
-			String spotifySongURL = scanner.nextLine();
-			if (!spotifySongURL.substring(24, 29).equals("local")) {
-				spotifyLinkQueue.offer(spotifySongURL);
-				tryStartNewDownload();
-			}
-		}
-	}
-}
 
-
-class MasterSongDownloader {
-	ConcurrentLinkedQueue<String> spotifyLinkQueue = new ConcurrentLinkedQueue<String>();
-	ConcurrentLinkedQueue<SongInfo> songInfoQueue = new ConcurrentLinkedQueue<SongInfo>();
-	String filepath;
-	int maxConcurrentDownloads;
-	public MasterSongDownloader(String filepath, int maxConcurrentDownloads) {
-		this.maxConcurrentDownloads = maxConcurrentDownloads;
-		this.filepath = filepath;
-	}
 	public void queueAllSpotifyLinks() {
 		Scanner scanner;
 		try {
@@ -100,6 +33,37 @@ class MasterSongDownloader {
 			}
 		}
 	}
+	public void createAndExecuteThreads() {
+		while (!spotifyLinkQueue.isEmpty()) {
+			String spotifyURL = this.spotifyLinkQueue.poll();
+			SingleSongDownloader ssd = new SingleSongDownloader_Concurrent(this, spotifyURL);
+			executor.execute(ssd);
+		}
+		executor.shutdown();
+	}
+	public void finishedAllThreads() {
+		System.out.println("Finished all threads");
+	}
 	
+	public void successfulDownload(SongInfo song) {
+		numDone++;
+		System.out.print("("+numDone+"), ");
+		System.out.println("successfully downloaded: " + song);
+	}
+	public void failedDownload(String spotifyLink, SongInfo song) {
+		String songString = spotifyLink;
+		if (song != null) songString = songString + " -- " + song.toString();
+		numDone++;
+		System.out.print("("+numDone+"), ");
+		System.out.println("FAILED to download: " + songString);
+	}
 	
+	public void startDownloadingAllSongs() {
+		queueAllSpotifyLinks();
+		createAndExecuteThreads();
+		while (!executor.isTerminated()) {
+
+		}
+		finishedAllThreads();
+	}
 }
