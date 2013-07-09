@@ -1,14 +1,14 @@
 package main.structures;
 
 
-public class DownloadListing implements Comparable<DownloadListing> {
-	public SongDataHolder song;
+public class SongDownloadListing implements Comparable<SongDownloadListing> {
+	public SongInfo song;
 	public String listingID;
 	public String downloadLink;
 	public int bitrate = 0;
 	public int sizeInKB = 0;
 	
-	public DownloadListing(SongDataHolder song, String listingID, int bitrate, int sizeInKB, String downloadLink) {
+	public SongDownloadListing(SongInfo song, String listingID, int bitrate, int sizeInKB, String downloadLink) {
 		this.song = song;
 		this.listingID = listingID;
 		this.bitrate = bitrate;
@@ -21,7 +21,7 @@ public class DownloadListing implements Comparable<DownloadListing> {
 		return temp;
 	}
 	@Override
-	public int compareTo(DownloadListing o) {
+	public int compareTo(SongDownloadListing o) {
 		assert(song == o.song);
 		if (getAbsPoints() > o.getAbsPoints()) {
 			return 1;

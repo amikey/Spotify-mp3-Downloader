@@ -1,9 +1,9 @@
-package main.songdownloader;
+package main.listing_sources;
 
 
-import main.structures.DownloadListing;
+import main.structures.SongDownloadListing;
 import main.structures.MultipleTry;
-import main.structures.SongDataHolder;
+import main.structures.SongInfo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,11 +11,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-public class SD_MP3Skull extends SongDownloader {
+public class LS_MP3Skull extends ListingSource {
 	private static String BASE_URL = "http://mp3skull.com/mp3/";
 	private static String URL_END = ".html";
 	private String COMBINED_URL;
-	public SD_MP3Skull(SongDataHolder song) {
+	public LS_MP3Skull(SongInfo song) {
 		super(song);
 		COMBINED_URL = BASE_URL + formatSongDataString(song) + URL_END;
 		//COMBINED_URL = "http://mp3skull.com/mp3/my_chemical_romance_helena.html";
@@ -76,7 +76,7 @@ public class SD_MP3Skull extends SongDownloader {
 				if (sizeString.length() > 0)
 					size = (int)((new Double(sizeString)) * 1024);
 								
-				DownloadListing dl = new DownloadListing(song, listingID, bitrate, size, downloadLink);
+				SongDownloadListing dl = new SongDownloadListing(song, listingID, bitrate, size, downloadLink);
 				downloadListingHeap.add(dl);
 			}
 			catch (Exception e) {
@@ -87,7 +87,7 @@ public class SD_MP3Skull extends SongDownloader {
 	}
 
 	@Override
-	String formatSongDataString(SongDataHolder song) {
+	String formatSongDataString(SongInfo song) {
 		String temp = song.artist+"_"+ song.title;
 		String finalString = temp.replaceAll(" ", "_");
 		return finalString;

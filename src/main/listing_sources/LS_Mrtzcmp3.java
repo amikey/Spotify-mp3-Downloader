@@ -1,12 +1,12 @@
-package main.songdownloader;
+package main.listing_sources;
 
 
 import java.io.IOException;
 
 import main.structures.DownloadData;
-import main.structures.DownloadListing;
+import main.structures.SongDownloadListing;
 import main.structures.MultipleTry;
-import main.structures.SongDataHolder;
+import main.structures.SongInfo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,12 +14,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-public class SD_Mrtzcmp3 extends SongDownloader {
+public class LS_Mrtzcmp3 extends ListingSource {
 	private static String BASE_URL = "http://www.mrtzcmp3.net/";
 	private static String URL_END = "_1s.html";
 	private String COMBINED_URL;
 	
-	public SD_Mrtzcmp3(SongDataHolder song) {
+	public LS_Mrtzcmp3(SongInfo song) {
 		super(song);
 		COMBINED_URL = BASE_URL + formatSongDataString(song) + URL_END;
 	}
@@ -60,7 +60,7 @@ public class SD_Mrtzcmp3 extends SongDownloader {
 				Element downloadAnchor = downloadCell.select("a").first();
 				String downloadHref = downloadAnchor.attr("href");
 				String downloadLink = BASE_URL + downloadHref;
-				DownloadListing dl = new DownloadListing(song, listingID, 0, 0, downloadLink); //TODO either get size and bit or leave as is
+				SongDownloadListing dl = new SongDownloadListing(song, listingID, 0, 0, downloadLink); //TODO either get size and bit or leave as is
 				downloadListingHeap.add(dl);
 			}
 			catch (Exception e) {
@@ -69,12 +69,12 @@ public class SD_Mrtzcmp3 extends SongDownloader {
 		}
 	}
 	@Override
-	String formatSongDataString(SongDataHolder song) {
+	String formatSongDataString(SongInfo song) {
 		String temp = song.artist+"_"+ song.title;
 		String finalString = temp.replaceAll(" ", "_");
 		return finalString;
 	}
-	public DownloadData getDownloadData(DownloadListing dl) throws IOException {
+	public DownloadData getDownloadData(SongDownloadListing dl) throws IOException {
 		String temp = dl.downloadLink.substring(26);
 		int underscoreIndex = temp.indexOf('_');
 		String key = temp.substring(0, underscoreIndex);

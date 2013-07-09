@@ -2,10 +2,10 @@ package main;
 
 import java.io.IOException;
 
-import main.songdownloader.MasterDownloader;
-import main.songdownloader.SongQueue;
+import main.song_downloaders.MultiSongDownloader_Queue;
+import main.song_downloaders.SingleSongDownloader;
 import main.structures.MultipleTry;
-import main.structures.SongDataHolder;
+import main.structures.SongInfo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,12 +19,12 @@ public class SpotifyDownloader {
 	
 	
 	//Bullet proof data collection from Spotify
-	public static SongDataHolder getSongDataForSpotifyURLWithTries(int maxTimes, String url) {
+	public static SongInfo getSongDataForSpotifyURLWithTries(int maxTimes, String url) {
 		//SpotifyDownloader sd = new SpotifyDownloader();
 		Object[] input = {url};
-		SongDataHolder sdh;
-		MultipleTry<SongDataHolder> mt = new MultipleTry<SongDataHolder>(maxTimes, input) {
-			public SongDataHolder tryThis() throws Exception {
+		SongInfo sdh;
+		MultipleTry<SongInfo> mt = new MultipleTry<SongInfo>(maxTimes, input) {
+			public SongInfo tryThis() throws Exception {
 				String url = (String)input[0];
 				return SpotifyDownloader.getSongDataForSpotifyURL(url);
 			}
@@ -33,7 +33,7 @@ public class SpotifyDownloader {
 		sdh = mt.getData();
 		return sdh;
 	}
-	private static SongDataHolder getSongDataForSpotifyURL(String url) throws IOException {
+	private static SongInfo getSongDataForSpotifyURL(String url) throws IOException {
 		Document doc = Jsoup.connect(url).get();
 		//title
 		Elements tempTitleElems = doc.select("h1[itemprop=name]");
@@ -51,7 +51,7 @@ public class SpotifyDownloader {
 		String album = albumElem.text();
 		//sdh.album = album;
 		//System.out.println(sdh);
-		return new SongDataHolder(title, album, artist);
+		return new SongInfo(title, album, artist);
 	}
 	
 	public static void main(String[] args) {
@@ -66,7 +66,7 @@ public class SpotifyDownloader {
 //		md.download(song.artist + "-" + song.album + "-" + song.title + ".mp3"); 
 //		//TODO, this may lead to confusion when it is not right
 		
-		SongQueue sq = new SongQueue("/users/manu/desktop/spotifyLinks.txt", 10);
+		MultiSongDownloader_Queue sq = new MultiSongDownloader_Queue("/users/manu/desktop/spotifyLinks.txt", 10);
 		new Thread(sq).start();
 		
 	}

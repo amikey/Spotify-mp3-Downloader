@@ -1,10 +1,10 @@
-package main.songdownloader;
+package main.song_downloaders;
 
-import main.structures.SongDataHolder;
+import main.structures.SongInfo;
 
-public class MasterDownloaderConcurrent extends MasterDownloader {
-	SongQueue sq;
-	public MasterDownloaderConcurrent(SongQueue sq, SongDataHolder song) {
+public class SingleSongDownloader_Concurrent extends SingleSongDownloader {
+	MultiSongDownloader_Queue sq;
+	public SingleSongDownloader_Concurrent(MultiSongDownloader_Queue sq, SongInfo song) {
 		super(song);
 		this.sq = sq;
 	}

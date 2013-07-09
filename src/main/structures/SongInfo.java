@@ -2,14 +2,14 @@ package main.structures;
 
 
 
-public class SongDataHolder {
+public class SongInfo {
 	public String title;
 	public String album;
 	public String artist;
 	public String toString() {
 		return artist+" - "+album+" - "+title;
 	}
-	public SongDataHolder(String title, String album, String artist) {
+	public SongInfo(String title, String album, String artist) {
 		this.title = title;
 		this.album = album;
 		this.artist = artist;

@@ -1,12 +1,12 @@
-package main.songdownloader;
+package main.listing_sources;
 
 import java.net.URLEncoder;
 
 
 
-import main.structures.DownloadListing;
+import main.structures.SongDownloadListing;
 import main.structures.MultipleTry;
-import main.structures.SongDataHolder;
+import main.structures.SongInfo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,12 +15,12 @@ import org.jsoup.select.Elements;
 
 
 
-public class SD_Dilandau extends SongDownloader {
+public class LS_Dilandau extends ListingSource {
 	private static String BASE_URL = "http://en.dilandau.eu/download-songs-mp3/";
 	private static String URL_END = "/1.html";
 	private String COMBINED_URL;
 	
-	public SD_Dilandau(SongDataHolder song) throws Exception {
+	public LS_Dilandau(SongInfo song) throws Exception {
 		super(song);
 		COMBINED_URL = BASE_URL+formatSongDataString(song)+URL_END;
 	}
@@ -61,7 +61,7 @@ public class SD_Dilandau extends SongDownloader {
 				String downloadLink = downloadHref+downloadURL;
 				String[] temp = sizeString.split(" ");
 				int size = (int)((new Double(temp[0])) * 1024);
-				DownloadListing dl = new DownloadListing(song, listingName, 0, size, downloadLink);
+				SongDownloadListing dl = new SongDownloadListing(song, listingName, 0, size, downloadLink);
 				downloadListingHeap.add(dl);
 			}
 			} catch (Exception e) {
@@ -73,7 +73,7 @@ public class SD_Dilandau extends SongDownloader {
 		
 
 	@Override
-	String formatSongDataString(SongDataHolder song) throws Exception {
+	String formatSongDataString(SongInfo song) throws Exception {
 		String temp = song.artist+" "+song.title;
 		String urlEncoded = URLEncoder.encode(temp, "UTF-8");
 		String finalString = urlEncoded.replaceAll("\\+", "%20");

@@ -1,4 +1,4 @@
-package main.songdownloader;
+package main.song_downloaders;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -7,9 +7,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import main.listing_sources.LS_Dilandau;
+import main.listing_sources.LS_MP3Skull;
+import main.listing_sources.ListingSource;
 import main.structures.DownloadData;
-import main.structures.DownloadListing;
-import main.structures.SongDataHolder;
+import main.structures.SongDownloadListing;
+import main.structures.SongInfo;
 
 import org.cmc.music.common.ID3ReadException;
 import org.cmc.music.myid3.*;
@@ -21,19 +24,19 @@ import org.farng.mp3.MP3File;
 import org.farng.mp3.TagException;
 
 
-public class MasterDownloader implements Runnable {
-	private ArrayList<SongDownloader> childrenDownloaders = new ArrayList<SongDownloader>();
-	protected SongDataHolder song;
-	public MasterDownloader(SongDataHolder song) {
+public class SingleSongDownloader implements Runnable {
+	private ArrayList<ListingSource> childrenDownloaders = new ArrayList<ListingSource>();
+	protected SongInfo song;
+	public SingleSongDownloader(SongInfo song) {
 		this.song=song;
 		try {
-			SongDownloader sdl1 = new SD_Dilandau(song);
+			ListingSource sdl1 = new LS_Dilandau(song);
 			childrenDownloaders.add(sdl1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		SongDownloader sdl2 = new SD_MP3Skull(song);
+		ListingSource sdl2 = new LS_MP3Skull(song);
 		childrenDownloaders.add(sdl2);
 		//Does not work
 //		SongDownloader sdl3 = new SD_Mrtzcmp3(song);
@@ -54,15 +57,15 @@ public class MasterDownloader implements Runnable {
 		if (childrenDownloaders.size() == 0) throw new IOException("NO DOWNLOAD LINKS");
 		
 		int bestSDL = 0;
-		DownloadListing dl = childrenDownloaders.get(0).peakBestDownload();
+		SongDownloadListing dl = childrenDownloaders.get(0).peakBestDownload();
 		for(int i=1; i<childrenDownloaders.size(); i++) {
-			DownloadListing dl2 = childrenDownloaders.get(i).peakBestDownload();
+			SongDownloadListing dl2 = childrenDownloaders.get(i).peakBestDownload();
 			if (dl.compareTo(dl2) < 1) {
 				dl = dl2;
 				bestSDL = i;
 			}
 		}
-		DownloadListing bestDL = childrenDownloaders.get(bestSDL).popBestDownload();
+		SongDownloadListing bestDL = childrenDownloaders.get(bestSDL).popBestDownload();
 		DownloadData dd = childrenDownloaders.get(bestSDL).getDownloadData(bestDL);
 		return dd;
 	}

@@ -1,38 +1,38 @@
-package main.songdownloader;
+package main.listing_sources;
 
 import java.io.IOException;
 
 import main.structures.BinaryHeap;
 import main.structures.DownloadData;
-import main.structures.DownloadListing;
-import main.structures.SongDataHolder;
+import main.structures.SongDownloadListing;
+import main.structures.SongInfo;
 
 
 
-public abstract class SongDownloader {
+public abstract class ListingSource {
 	public static String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31";
-	protected SongDataHolder song;
-	public BinaryHeap<DownloadListing> downloadListingHeap = new BinaryHeap<DownloadListing>();
+	protected SongInfo song;
+	public BinaryHeap<SongDownloadListing> downloadListingHeap = new BinaryHeap<SongDownloadListing>();
 
 	abstract void generateDownloadListing();
-	abstract String formatSongDataString(SongDataHolder song) throws Exception;
+	abstract String formatSongDataString(SongInfo song) throws Exception;
 	
-	public SongDownloader(SongDataHolder song) {
+	public ListingSource(SongInfo song) {
 		this.song = song;
 	}
-	public BinaryHeap<DownloadListing> getDownloadListingsHeap() {
+	public BinaryHeap<SongDownloadListing> getDownloadListingsHeap() {
 		return downloadListingHeap;
 	}
 	public void start() {
 		generateDownloadListing();
 	}
-	public DownloadListing peakBestDownload() {
+	public SongDownloadListing peakBestDownload() {
 		return downloadListingHeap.peek(); //TODO there is an error if empty
 	}
-	public DownloadListing popBestDownload() {
+	public SongDownloadListing popBestDownload() {
 		return downloadListingHeap.remove();
 	}
-	public DownloadData getDownloadData(DownloadListing dl) throws IOException {
+	public DownloadData getDownloadData(SongDownloadListing dl) throws IOException {
 		String strUrl = dl.downloadLink;
 		return new DownloadData(strUrl);
 	}

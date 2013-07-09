@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import main.songdownloader.SongDownloader;
+import main.listing_sources.ListingSource;
 
 
 public class DownloadData {
@@ -20,7 +20,7 @@ public class DownloadData {
 			public HttpURLConnection tryThis() throws Exception {
 				URL url = (URL)input[0];
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-				connection.setRequestProperty("User-Agent", SongDownloader.USER_AGENT);
+				connection.setRequestProperty("User-Agent", ListingSource.USER_AGENT);
 				connection.connect();
 				return connection;
 			}
