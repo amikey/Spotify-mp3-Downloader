@@ -10,16 +10,22 @@ public abstract class MultipleTry<E> {
 		this.input = input;
 	}
 	public abstract E tryThis() throws Exception;
-	public void start() {
-		while (times<maxTimes) {
+	public void start() throws Exception {
+		//Exception ex;
+		while (true) {
 			try {
 				data = tryThis();
 				times = maxTimes;
+				return;
 			}
 			catch (Exception e) {
 				times++;
+				if (times>=maxTimes) {
+					throw e;
+				}
 			}
 		}
+		//throw ex;
 	}
 	public E getData() {
 		return data;

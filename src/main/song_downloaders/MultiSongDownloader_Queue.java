@@ -6,11 +6,13 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import main.SpotifyDownloader;
 import main.structures.SongInfo;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class MultiSongDownloader_Queue implements Runnable {
 	ConcurrentLinkedQueue<String> spotifyLinkQueue = new ConcurrentLinkedQueue<String>();
-	ConcurrentLinkedQueue<String> failedSongs = new ConcurrentLinkedQueue<String>();
+	ConcurrentLinkedQueue<String> failedSongs = new ConcurrentLinkedQueue<String>();	
 	int numDone = 0;
 	String filepath;
 	int maxConcurrentDownloads;
@@ -41,13 +43,14 @@ public class MultiSongDownloader_Queue implements Runnable {
 			currConcurrentDownloads++;
 			SongInfo song;
 			String spotifyURL = this.spotifyLinkQueue.poll();
-			song = SpotifyDownloader.getSongDataForSpotifyURLWithTries(3, spotifyURL);
-			if (song == null) {
-				failedDownload(spotifyURL);
-			}
-			else {
+			try {
+				song = SpotifyDownloader.getSongDataForSpotifyURLWithTries(3, spotifyURL);
+				//by here song is guaranteed to be initialized and not be null
 				SingleSongDownloader md = new SingleSongDownloader_Concurrent(this, song);
 				new Thread(md).start();
+			} catch (Exception e) {
+				failedDownload(spotifyURL);
+				return;
 			}
 		}
 		if (this.spotifyLinkQueue.isEmpty() && currConcurrentDownloads ==0) {
@@ -78,4 +81,32 @@ public class MultiSongDownloader_Queue implements Runnable {
 			}
 		}
 	}
+}
+
+
+class MasterSongDownloader {
+	ConcurrentLinkedQueue<String> spotifyLinkQueue = new ConcurrentLinkedQueue<String>();
+	ConcurrentLinkedQueue<SongInfo> songInfoQueue = new ConcurrentLinkedQueue<SongInfo>();
+	String filepath;
+	int maxConcurrentDownloads;
+	public MasterSongDownloader(String filepath, int maxConcurrentDownloads) {
+		this.maxConcurrentDownloads = maxConcurrentDownloads;
+		this.filepath = filepath;
+	}
+	public void queueAllSpotifyLinks() {
+		Scanner scanner;
+		try {
+			scanner = new Scanner(new File(filepath));
+		} catch (FileNotFoundException e) {
+			return;
+		}
+		while(scanner.hasNextLine()) {
+			String spotifySongURL = scanner.nextLine();
+			if (!spotifySongURL.substring(24, 29).equals("local")) {
+				spotifyLinkQueue.offer(spotifySongURL);
+			}
+		}
+	}
+	
+	
 }

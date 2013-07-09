@@ -14,7 +14,7 @@ public abstract class ListingSource {
 	protected SongInfo song;
 	public BinaryHeap<SongDownloadListing> downloadListingHeap = new BinaryHeap<SongDownloadListing>();
 
-	public abstract void generateListings();
+	public abstract void generateListings() throws Exception;
 	abstract String formatSongDataString(SongInfo song) throws Exception;
 	
 	public ListingSource(SongInfo song) {
@@ -30,7 +30,7 @@ public abstract class ListingSource {
 	public SongDownloadListing popListing() {
 		return downloadListingHeap.remove();
 	}
-	public DownloadData getDownloadData(SongDownloadListing dl) throws IOException {
+	public DownloadData getDownloadData(SongDownloadListing dl) throws Exception {
 		String strUrl = dl.downloadLink;
 		return new DownloadData(strUrl);
 	}

@@ -71,23 +71,22 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				btnNewButton.invalidate();
 				String spotifyURL = textField.getText();
-				SongInfo song;
+				SongInfo song = null;
 				//http://open.spotify.com/track/5dTHtzHFPyi8TlTtzoz1J9 ---helena mcr
 				//http://open.spotify.com/track/1UX6IpGYtIOP7J40NeY5pp ---blink 182
 				//http://open.spotify.com/track/1GErReAT0swX36x3O8GyQn -- to the end mcr
 				//http://open.spotify.com/track/4VbDJMkAX3dWNBdn3KH6Wx -- helena beat foster the people
-				song = SpotifyDownloader.getSongDataForSpotifyURLWithTries(3, spotifyURL);
-				SingleSongDownloader md = new SingleSongDownloader_GUI(progressBar, song);
-				new Thread(md).start();
-//				md.start();
-//				//progressBar.setValue(2);
-//				md.download(song.artist + "-" + song.album + "-" + song.title + ".mp3"); 
+				try {
+					song = SpotifyDownloader.getSongDataForSpotifyURLWithTries(3, spotifyURL);
+					SingleSongDownloader md = new SingleSongDownloader_GUI(progressBar, song);
+					new Thread(md).start();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		frmSpotifyDownloader.getContentPane().add(btnNewButton, "cell 2 1");
-		
-//		JProgressBar progressBar = new JProgressBar();
-//		frmSpotifyDownloader.getContentPane().add(progressBar, "cell 0 2 3 1,growx");
 	}
 
 }

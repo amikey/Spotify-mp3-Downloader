@@ -7,10 +7,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import main.SpotifyDownloader;
 import main.listing_sources.LS_Dilandau;
 import main.listing_sources.LS_MP3Skull;
 import main.listing_sources.ListingSource;
 import main.structures.DownloadData;
+import main.structures.MultipleTry;
 import main.structures.SongDownloadListing;
 import main.structures.SongInfo;
 
@@ -36,10 +43,19 @@ public class SingleSongDownloader implements Runnable {
 	public void populateListingSources() {
 		System.out.println("starting to download: "+song);
 		for(int i=0; i<sources.size(); i++) {
-			sources.get(i).generateListings();
+			try {
+				sources.get(i).generateListings();
+			} catch (Exception e) {
+				sources.set(i, null);
+			}
+		}
+		for(int i=0; i<sources.size(); i++) {
+			if (sources.get(i) == null) {
+				sources.remove(i);
+			}
 		}
 	}
-	private DownloadData popBestDownloadData() throws IOException {
+	private DownloadData popBestDownloadData() throws Exception {
 		for(int i=sources.size()-1; i>=0; i--) {
 			if (sources.get(i).downloadListingHeap.isEmpty()) {
 				sources.remove(i);
@@ -71,7 +87,7 @@ public class SingleSongDownloader implements Runnable {
 				//dd is initialized if error is not caught
 				download(filepath, dd);
 				success = true;
-			} catch (IOException e) {
+			} catch (Exception e) {
 				timesTried++;
 				System.out.println("error downloading, trying again: "+song);
 				//e.printStackTrace();
@@ -104,6 +120,42 @@ public class SingleSongDownloader implements Runnable {
 		input.close();
 	}
 	protected void setCurrProgress(double percentage) {}
+	
+	//Bullet proof data collection from Spotify
+	public static SongInfo getSongDataForSpotifyURLWithTries(int maxTimes, String url) throws Exception {
+		//SpotifyDownloader sd = new SpotifyDownloader();
+		Object[] input = {url};
+		SongInfo sdh;
+		MultipleTry<SongInfo> mt = new MultipleTry<SongInfo>(maxTimes, input) {
+			public SongInfo tryThis() throws Exception {
+				String url = (String)input[0];
+				return SingleSongDownloader.getSongDataForSpotifyURL(url);
+			}
+		};
+		mt.start();
+		sdh = mt.getData();
+		return sdh;
+	}
+	private static SongInfo getSongDataForSpotifyURL(String url) throws IOException {
+		Document doc = Jsoup.connect(url).get();
+		//title
+		Elements tempTitleElems = doc.select("h1[itemprop=name]");
+		Element titleElem = tempTitleElems.first();
+		String title = titleElem.text();
+		//sdh.title = title;
+		//artist
+		Elements tempArtistElems = doc.select("h2 a");
+		Element artistElem = tempArtistElems.first();
+		String artist = artistElem.text();
+		//sdh.artist = artist;
+		//album
+		Elements tempAlbumElems = doc.select("h3 a");
+		Element albumElem = tempAlbumElems.first();
+		String album = albumElem.text();
+		//sdh.album = album;
+		//System.out.println(sdh);
+		return new SongInfo(title, album, artist);
+	}
 	
 	@Override
 	public void run() {

@@ -16,10 +16,9 @@ import org.jsoup.select.Elements;
 public class SpotifyDownloader {
 	//Handle error in the calling method. try three times before giving up
 	
-	
-	
+	//TODO remove these methods from here. moved to single song downloader
 	//Bullet proof data collection from Spotify
-	public static SongInfo getSongDataForSpotifyURLWithTries(int maxTimes, String url) {
+	public static SongInfo getSongDataForSpotifyURLWithTries(int maxTimes, String url) throws Exception {
 		//SpotifyDownloader sd = new SpotifyDownloader();
 		Object[] input = {url};
 		SongInfo sdh;
@@ -53,6 +52,7 @@ public class SpotifyDownloader {
 		//System.out.println(sdh);
 		return new SongInfo(title, album, artist);
 	}
+
 	
 	public static void main(String[] args) {
 //		SongDataHolder song;

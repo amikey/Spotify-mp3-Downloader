@@ -24,7 +24,7 @@ public class LS_Mrtzcmp3 extends ListingSource {
 		COMBINED_URL = BASE_URL + formatSongDataString(song) + URL_END;
 	}
 	@Override
-	public void generateListings() {
+	public void generateListings() throws Exception {
 		String url = COMBINED_URL;
 		Document doc = null;
 		
@@ -60,7 +60,8 @@ public class LS_Mrtzcmp3 extends ListingSource {
 				Element downloadAnchor = downloadCell.select("a").first();
 				String downloadHref = downloadAnchor.attr("href");
 				String downloadLink = BASE_URL + downloadHref;
-				SongDownloadListing dl = new SongDownloadListing(song, listingID, 0, 0, downloadLink); //TODO either get size and bit or leave as is
+				SongDownloadListing dl = new SongDownloadListing(song, listingID, 0, 0, downloadLink); 
+				//TODO either get size and bit or leave as is
 				downloadListingHeap.add(dl);
 			}
 			catch (Exception e) {
@@ -74,7 +75,7 @@ public class LS_Mrtzcmp3 extends ListingSource {
 		String finalString = temp.replaceAll(" ", "_");
 		return finalString;
 	}
-	public DownloadData getDownloadData(SongDownloadListing dl) throws IOException {
+	public DownloadData getDownloadData(SongDownloadListing dl) throws Exception {
 		String temp = dl.downloadLink.substring(26);
 		int underscoreIndex = temp.indexOf('_');
 		String key = temp.substring(0, underscoreIndex);

@@ -11,7 +11,7 @@ import main.listing_sources.ListingSource;
 public class DownloadData {
 	public InputStream input;
 	public int size = 0;
-	public DownloadData(String strUrl) throws IOException { //if throws error, stop because IDK what to do with it
+	public DownloadData(String strUrl) throws Exception { //if throws error, stop because IDK what to do with it
 		URL url = new URL(strUrl); //if this throws an error, no point in trying again.
 		// tries 3 times to open and connect to URL
 		int maxTimes = 3;
@@ -26,7 +26,7 @@ public class DownloadData {
 			}
 		};
 		mt.start();
-		//definitely good connection
+		//definitely good connection if no error
 		HttpURLConnection connection = mt.getData();
 		size = getFileSize(connection); //if error is thrown, stop because, there was not a good response code
 		//still a possibility of -1
@@ -38,7 +38,8 @@ public class DownloadData {
 		
 	}
 	protected int getFileSize(HttpURLConnection connection) throws IOException {
-		// Check if the request is handled successfully
+		//connection guaranteed to not be null
+		//Check if the request is handled successfully
 		int contentLength = -1;
 		if(connection !=null && connection.getResponseCode() / 100 == 2)  
 		{  
