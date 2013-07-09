@@ -4,13 +4,11 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JProgressBar;
 
 import main.song_downloaders.SingleSongDownloader;
 import main.song_downloaders.SingleSongDownloader_GUI;
-import main.structures.SongInfo;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
 
@@ -71,19 +69,13 @@ public class MainWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				btnNewButton.invalidate();
 				String spotifyURL = textField.getText();
-				SongInfo song = null;
 				//http://open.spotify.com/track/5dTHtzHFPyi8TlTtzoz1J9 ---helena mcr
 				//http://open.spotify.com/track/1UX6IpGYtIOP7J40NeY5pp ---blink 182
 				//http://open.spotify.com/track/1GErReAT0swX36x3O8GyQn -- to the end mcr
 				//http://open.spotify.com/track/4VbDJMkAX3dWNBdn3KH6Wx -- helena beat foster the people
-				try {
-					song = SpotifyDownloader.getSongDataForSpotifyURLWithTries(3, spotifyURL);
-					SingleSongDownloader md = new SingleSongDownloader_GUI(progressBar, song);
-					new Thread(md).start();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
+				SingleSongDownloader md = new SingleSongDownloader_GUI(progressBar, spotifyURL);
+				new Thread(md).start();
 			}
 		});
 		frmSpotifyDownloader.getContentPane().add(btnNewButton, "cell 2 1");

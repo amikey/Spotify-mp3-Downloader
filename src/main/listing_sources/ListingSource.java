@@ -1,6 +1,5 @@
 package main.listing_sources;
 
-import java.io.IOException;
 
 import main.structures.BinaryHeap;
 import main.structures.DownloadData;
