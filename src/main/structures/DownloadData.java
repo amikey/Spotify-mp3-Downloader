@@ -8,7 +8,7 @@ import java.net.URL;
 import main.listing_sources.ListingSource;
 
 
-public class DownloadData {
+class DownloadData {
 	public InputStream input;
 	public int size = 0;
 	public DownloadData(String strUrl) throws Exception { //if throws error, stop because IDK what to do with it

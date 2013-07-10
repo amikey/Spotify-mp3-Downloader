@@ -4,6 +4,7 @@ package main.listing_sources;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+import org.apache.http.client.HttpClient;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
@@ -11,10 +12,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import main.structures.BinaryHeap;
-import main.structures.DownloadData;
 import main.structures.MultipleTry;
 import main.structures.SongDownloadListing;
 import main.structures.SongInfo;
+
 
 
 
@@ -95,11 +96,6 @@ public abstract class ListingSource {
 	public SongDownloadListing popListing() {
 		return downloadListingHeap.remove();
 	}
-	public DownloadData getDownloadData(SongDownloadListing dl) throws Exception {
-		String strUrl = dl.downloadLink;
-		return new DownloadData(strUrl);
-	}
-	
 	
 }
    
