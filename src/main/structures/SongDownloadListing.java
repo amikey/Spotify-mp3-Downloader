@@ -56,8 +56,8 @@ public class SongDownloadListing implements Comparable<SongDownloadListing> {
 		boolean reject = false;
 		String[] badWords = {"remix", "cover", "live", "mash", "dj", "mix", "edit", "customized", "customised", "instrumental", "rework"};
 		String matchString = (listingID+" "+getURLString()).toLowerCase().replaceAll("\\(", " LP ").replaceAll("\\)", " RP ");
-		boolean titleMatch = matchString.matches(".*?"+song.title.toLowerCase()+".*?");
-		boolean artistMatch = matchString.matches(".*?"+song.artist.toLowerCase()+".*?");
+		boolean titleMatch = matchString.matches(".*?"+song.title.toLowerCase().replaceAll("\\(", " LP ").replaceAll("\\)", " RP ")+".*?");
+		boolean artistMatch = matchString.matches(".*?"+song.artist.toLowerCase().replaceAll("\\(", " LP ").replaceAll("\\)", " RP ")+".*?");
 		boolean doesntHaveBadWord = true;
 		for(int i=0; i<badWords.length; i++) {
 			if (song.title.toLowerCase().matches(".*?"+badWords[i]+".*?")) {

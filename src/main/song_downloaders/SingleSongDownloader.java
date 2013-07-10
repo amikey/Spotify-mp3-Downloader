@@ -15,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import main.listing_sources.LS_Dilandau;
+import main.listing_sources.LS_MP3Juices;
 import main.listing_sources.LS_MP3Skull;
 import main.listing_sources.ListingSource;
 import main.structures.MultipleTry;
@@ -32,18 +33,19 @@ public class SingleSongDownloader implements Runnable {
 	
 	public void initializeSources() throws Exception {
 		this.song = getSongDataForSpotifyURLWithTries(3, spotifyLink);
-		try {
-			ListingSource sdl1 = new LS_Dilandau(song);
-			//sources.add(sdl1);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		ListingSource sdl2 = new LS_MP3Skull(song);
+//		try {
+//			ListingSource sdl1 = new LS_Dilandau(song);
+//			sources.add(sdl1);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+
+		ListingSource sdl2 = new LS_MP3Juices(song);
 		sources.add(sdl2);
-		//Does not work
-//		SongDownloader sdl3 = new SD_Mrtzcmp3(song);
-//		childrenDownloaders.add(sdl3);
+		ListingSource sdl3 = new LS_MP3Skull(song);
+		sources.add(sdl3);
+
 	}
 	public void populateListingSources() {
 		System.out.println("starting to download: "+song);
@@ -182,12 +184,19 @@ public class SingleSongDownloader implements Runnable {
 	public void successfulDownload() {}
 	public void failedDownload() {}
 	
+	protected String createFilename(String directory, SongInfo song) {
+		String basic = (song.artist + "-" + song.album + "-" + song.title + ".mp3");
+		String encoded = basic.replaceAll("/", "-");
+		return directory+encoded;
+	}
+	
 	@Override
 	public void run() {
 		try {
 			initializeSources();
 			populateListingSources();
-			boolean success = downloadSongToFile(song.artist + "-" + song.album + "-" + song.title + ".mp3");
+			String filename = createFilename("./Music/", song);
+			boolean success = downloadSongToFile(filename);
 			if (success) successfulDownload();
 			else failedDownload();
 		} catch (Exception e) {

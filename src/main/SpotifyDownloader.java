@@ -65,7 +65,7 @@ public class SpotifyDownloader {
 //		md.download(song.artist + "-" + song.album + "-" + song.title + ".mp3"); 
 //		//TODO, this may lead to confusion when it is not right
 		
-		MasterSongDownloader msd = new MasterSongDownloader("/users/manu/desktop/spotifyLinks_small.txt", 10);
+		MasterSongDownloader msd = new MasterSongDownloader("/users/manu/desktop/spotifyLinks.txt", 10);
 		msd.startDownloadingAllSongs();
 	}
 	

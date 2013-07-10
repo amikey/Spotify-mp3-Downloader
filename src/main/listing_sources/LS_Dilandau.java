@@ -63,7 +63,7 @@ public class LS_Dilandau extends ListingSource {
 	}
 
 	@Override
-	DownloadRequest getDownloadConnection(Element cell) throws IOException, URISyntaxException {
+	DownloadRequest getDownloadRequest(Element cell) throws IOException, URISyntaxException {
 		Elements listingFields = cell.select("td");
 		Element actionCol = listingFields.get(3);
 		Element downloadAnchor = actionCol.select("a[download]").first();

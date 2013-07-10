@@ -61,7 +61,7 @@ public abstract class ListingSource {
 			try {
 				Element cell = getCell(page, i);
 				String listingID = getListingID(cell);
-				DownloadRequest req = getDownloadConnection(cell);
+				DownloadRequest req = getDownloadRequest(cell);
 				SongDownloadListing sdl = new SongDownloadListing(song, listingID, req);
 				if (!sdl.shouldReject()) {
 					downloadListingHeap.add(sdl);
@@ -84,7 +84,7 @@ public abstract class ListingSource {
 		//client.setHttpRequestRetryHandler(new VariableNumberRetryHandler(3));
 		HttpRequestBase request = genericHttpRequest(url);
 		
-		HttpResponse response = client.execute(request);//, httpContext);
+		HttpResponse response = client.execute(request, httpContext);
 		InputStream in = response.getEntity().getContent();
 		String htmlString = inputStreamToString(in);
 		Document doc = Jsoup.parse(htmlString);
@@ -95,7 +95,7 @@ public abstract class ListingSource {
 	abstract int getTotalCells(Document page) throws IOException;
 	abstract Element getCell(Document page, int index) throws NoSuchElementException, IOException;
 	abstract String getListingID(Element cell) throws IOException;
-	abstract DownloadRequest getDownloadConnection(Element cell) throws IOException, URISyntaxException;
+	abstract DownloadRequest getDownloadRequest(Element cell) throws IOException, URISyntaxException;
 	abstract String getInitURLForSong(SongInfo song) throws Exception;
 	
 	protected HttpRequestBase genericHttpRequest(String url) throws URISyntaxException {		

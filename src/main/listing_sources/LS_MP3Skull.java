@@ -55,7 +55,7 @@ public class LS_MP3Skull extends ListingSource {
 	}
 
 	@Override
-	DownloadRequest getDownloadConnection(Element cell) throws IOException, URISyntaxException {
+	DownloadRequest getDownloadRequest(Element cell) throws IOException, URISyntaxException {
 		Elements cellParts = cell.select("div");
 		Element nameAndDownloadInfo = cellParts.get(2);
 		

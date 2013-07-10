@@ -52,7 +52,7 @@ public class LS_Mrtzcmp3 extends ListingSource {
 	}
 	
 	@Override
-	DownloadRequest getDownloadConnection(Element cell) throws IOException, URISyntaxException {
+	DownloadRequest getDownloadRequest(Element cell) throws IOException, URISyntaxException {
 		Elements listingFields = cell.select("td");
 		Element downloadCell = listingFields.get(5);
 		Element downloadAnchor = downloadCell.select("a").first();
