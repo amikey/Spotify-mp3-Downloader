@@ -2,10 +2,13 @@ package main.listing_sources;
 
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
 
+import main.structures.DownloadRequest;
 import main.structures.SongInfo;
 
+import org.apache.http.client.methods.HttpRequestBase;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -49,7 +52,7 @@ public class LS_Mrtzcmp3 extends ListingSource {
 	}
 	
 	@Override
-	Connection getDownloadConnection(Element cell) throws IOException {
+	DownloadRequest getDownloadConnection(Element cell) throws IOException, URISyntaxException {
 		Elements listingFields = cell.select("td");
 		Element downloadCell = listingFields.get(5);
 		Element downloadAnchor = downloadCell.select("a").first();
@@ -62,6 +65,6 @@ public class LS_Mrtzcmp3 extends ListingSource {
 		String dlEnd = ".mrtzcmp3";
 		String finalDownloadURL = BASE_URL + key + dlEnd;
 		
-		return genericConnection(finalDownloadURL);
+		return genericDownloadRequest(finalDownloadURL);
 	}
 }

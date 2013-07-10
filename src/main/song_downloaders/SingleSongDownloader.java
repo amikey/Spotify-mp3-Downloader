@@ -7,7 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import org.jsoup.Connection.Response;
+import org.apache.http.HttpResponse;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,6 +20,7 @@ import main.listing_sources.ListingSource;
 import main.structures.MultipleTry;
 import main.structures.SongDownloadListing;
 import main.structures.SongInfo;
+import main.structures.VariableNumberRetryHandler;
 
 public class SingleSongDownloader implements Runnable {
 	private ArrayList<ListingSource> sources = new ArrayList<ListingSource>();
@@ -32,7 +34,7 @@ public class SingleSongDownloader implements Runnable {
 		this.song = getSongDataForSpotifyURLWithTries(3, spotifyLink);
 		try {
 			ListingSource sdl1 = new LS_Dilandau(song);
-			sources.add(sdl1);
+			//sources.add(sdl1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,13 +103,26 @@ public class SingleSongDownloader implements Runnable {
 	
 	//wont be able to show me download progress
 	private void download(String filepath, SongDownloadListing sdl) throws IOException {
-		File f=new File(filepath);
-		Response downloadResponse = sdl.downloadConn.ignoreContentType(true).execute();
-        FileOutputStream out = new FileOutputStream(f);
-        out.write(downloadResponse.bodyAsBytes());    
-        out.close();
+		DefaultHttpClient client = new DefaultHttpClient();
+		VariableNumberRetryHandler retryHandler = new VariableNumberRetryHandler(3);
+		client.setHttpRequestRetryHandler(retryHandler);
+		HttpResponse response = client.execute(sdl.request.httpRequest, sdl.request.httpContext);
+		InputStream in = response.getEntity().getContent();
+		download(filepath, in);
 	}
-	
+	private void download(String filepath, InputStream input) throws IOException {
+		File f=new File(filepath);
+		//f.getParentFile().mkdirs(); //TODO this line will add folders that dont exist, but will crash if no folders needed
+		OutputStream out=new FileOutputStream(f);
+		byte buf[]=new byte[1024];
+		int len;
+		
+		while((len=input.read(buf))>0) {
+			out.write(buf,0,len);
+		}
+		out.close();
+		input.close();
+	}
 	private void download(String filepath, InputStream input, int size) throws IOException {
 		File f=new File(filepath);
 		//f.getParentFile().mkdirs(); //TODO this line will add folders that dont exist, but will crash if no folders needed

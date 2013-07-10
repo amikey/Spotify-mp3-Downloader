@@ -3,38 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/jsoup-1.7.2.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-io-2.4/commons-io-2.4-javadoc.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-io-2.4/commons-io-2.4-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-io-2.4/commons-io-2.4-test-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-io-2.4/commons-io-2.4-tests.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-io-2.4/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/myid3.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/jid3lib-0.5.4.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/httpmime-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/httpclient-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/fluent-hc-4.2.1 copy.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/fluent-hc-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/httpclient-cache-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/httpcore-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTTP Components/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/htmlunit-2.10.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/htmlunit-core-js-2.10.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/xalan-2.7.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/commons-io-2.2.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/cssparser-0.9.7.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/sac-1.3.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/xercesImpl-2.9.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/httpcore-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/httpmime-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/nekohtml-1.9.16.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/xml-apis-1.3.04.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/httpclient-4.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/HTMLUnit/serializer-2.7.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/miglayout15-swing.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/fluent-hc-4.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/httpclient-cache-4.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/httpmime-4.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/httpcore-4.2.4.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

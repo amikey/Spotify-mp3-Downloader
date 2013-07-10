@@ -1,16 +1,16 @@
 package main.listing_sources;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.NoSuchElementException;
 
 
 
-import main.structures.SongDownloadListing;
-
+import main.structures.DownloadRequest;
 import main.structures.SongInfo;
 
-import org.jsoup.Connection;
+import org.apache.http.client.methods.HttpRequestBase;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,41 +26,7 @@ public class LS_Dilandau extends ListingSource {
 		super(song);
 	}
 
-	@Override
-	public void generateListings() {
-		Document page = null;
-		int num_cells = 0;
-		try {
-			String initURL = getInitURLForSong(song);
-			page = loadPage(initURL);
-			num_cells = getTotalCells(page);
-		} catch (IOException e) {
-			//error getting num_cells
-			return;
-		} catch (Exception e) {
-			//error formatting url or error loading page
-			return;
-		}
-		for (int i=0; i<num_cells; i++) {
-			try {
-				Element cell = getCell(page, i);
-				String listingID = getListingID(cell);
-				Connection conn = getDownloadConnection(cell);
-				SongDownloadListing sdl = new SongDownloadListing(song, listingID, conn);
-				if (!sdl.shouldReject()) {
-					downloadListingHeap.add(sdl);
-				}
-			} catch (NoSuchElementException e) {
-				//could not find cell at index
-				continue;
-			} catch (IOException e) {
-				//error in parsing
-				continue;
-			}
-		}
-	}
-		
-
+	
 	@Override
 	String getInitURLForSong(SongInfo song) throws Exception {
 		String temp = song.artist+" "+song.title;
@@ -97,7 +63,7 @@ public class LS_Dilandau extends ListingSource {
 	}
 
 	@Override
-	Connection getDownloadConnection(Element cell) throws IOException {
+	DownloadRequest getDownloadConnection(Element cell) throws IOException, URISyntaxException {
 		Elements listingFields = cell.select("td");
 		Element actionCol = listingFields.get(3);
 		Element downloadAnchor = actionCol.select("a[download]").first();
@@ -105,7 +71,7 @@ public class LS_Dilandau extends ListingSource {
 		String downloadURLEnd = downloadAnchor.attr("url");
 		String downloadURL = downloadURLBase+downloadURLEnd;
 		
-		return genericConnection(downloadURL);
+		return genericDownloadRequest(downloadURL);
 	}
 	
 

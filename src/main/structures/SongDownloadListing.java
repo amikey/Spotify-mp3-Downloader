@@ -1,21 +1,19 @@
 package main.structures;
 
-import org.jsoup.Connection;
-
 
 public class SongDownloadListing implements Comparable<SongDownloadListing> {
 	public SongInfo song;
 	public String listingID;
-	public Connection downloadConn;
+	public DownloadRequest request;
 	
-	public SongDownloadListing(SongInfo song, String listingID, Connection conn) {
+	public SongDownloadListing(SongInfo song, String listingID, DownloadRequest req) {
 		this.song = song;
 		this.listingID = listingID;
-		this.downloadConn = conn;
+		this.request = req;
 	}
 
 	public String toString() {
-		String temp = "{" + listingID  + ", " + downloadConn.request().url() + "}\n";
+		String temp = "{" + listingID  + ", " + getURLString() + "}\n";
 		return temp;
 	}
 	//currently this is useless as i am only adding obj to the heap that pass reject test.
@@ -33,7 +31,7 @@ public class SongDownloadListing implements Comparable<SongDownloadListing> {
 	protected int getAbsPoints() {
 		int points = 0;
 		String[] badWords = {"remix", "cover", "live", "mash", "dj", "mix", "edit", "customized", "customised", "instrumental", "rework"};
-		String matchString = (listingID+" "+downloadConn.request().url()).toLowerCase().replaceAll("\\(", " LP ").replaceAll("\\)", " RP ");
+		String matchString = (listingID+" "+getURLString()).toLowerCase().replaceAll("\\(", " LP ").replaceAll("\\)", " RP ");
 		boolean titleMatch = matchString.matches(".*?"+song.title.toLowerCase()+".*?");
 		boolean artistMatch = matchString.matches(".*?"+song.artist.toLowerCase()+".*?");
 		boolean doesntHaveBadWord = true;
@@ -57,7 +55,7 @@ public class SongDownloadListing implements Comparable<SongDownloadListing> {
 	public boolean shouldReject() {
 		boolean reject = false;
 		String[] badWords = {"remix", "cover", "live", "mash", "dj", "mix", "edit", "customized", "customised", "instrumental", "rework"};
-		String matchString = (listingID+" "+downloadConn.request().url()).toLowerCase().replaceAll("\\(", " LP ").replaceAll("\\)", " RP ");
+		String matchString = (listingID+" "+getURLString()).toLowerCase().replaceAll("\\(", " LP ").replaceAll("\\)", " RP ");
 		boolean titleMatch = matchString.matches(".*?"+song.title.toLowerCase()+".*?");
 		boolean artistMatch = matchString.matches(".*?"+song.artist.toLowerCase()+".*?");
 		boolean doesntHaveBadWord = true;
@@ -76,6 +74,10 @@ public class SongDownloadListing implements Comparable<SongDownloadListing> {
 		return reject;
 	}
 
+	private String getURLString() {
+		return request.httpRequest.getURI().toString();
+	}
+	
 }
 
 //rank download listings

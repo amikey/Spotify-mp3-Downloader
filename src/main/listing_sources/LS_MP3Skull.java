@@ -2,11 +2,14 @@ package main.listing_sources;
 
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
 
 
+import main.structures.DownloadRequest;
 import main.structures.SongInfo;
 
+import org.apache.http.client.methods.HttpRequestBase;
 import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,7 +55,7 @@ public class LS_MP3Skull extends ListingSource {
 	}
 
 	@Override
-	Connection getDownloadConnection(Element cell) throws IOException {
+	DownloadRequest getDownloadConnection(Element cell) throws IOException, URISyntaxException {
 		Elements cellParts = cell.select("div");
 		Element nameAndDownloadInfo = cellParts.get(2);
 		
@@ -60,7 +63,7 @@ public class LS_MP3Skull extends ListingSource {
 		Element downloadAnchor = downloadDiv.select("div div a").get(0);
 		String downloadURL = downloadAnchor.attr("href");
 		
-		return genericConnection(downloadURL);
+		return genericDownloadRequest(downloadURL);
 	}
 
 }
