@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JProgressBar;
 
 import main.song_downloaders.SingleSongDownloader;
+import main.song_downloaders.SingleSongDownloader_Concurrent_GUI;
 import main.song_downloaders.SingleSongDownloader_GUI;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JLabel;
@@ -52,7 +53,7 @@ public class MainWindow {
 		frmSpotifyDownloader.setTitle("Spotify Downloader");
 		frmSpotifyDownloader.setBounds(100, 100, 450, 127);
 		frmSpotifyDownloader.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmSpotifyDownloader.getContentPane().setLayout(new MigLayout("", "[][grow][]", "[][][]"));
+		frmSpotifyDownloader.getContentPane().setLayout(new MigLayout("", "[][grow][]", "[][][4.00][63.00][75.00]"));
 		
 		JLabel lblSpotifyLinkGoes = new JLabel("Spotify Link Goes Here");
 		frmSpotifyDownloader.getContentPane().add(lblSpotifyLinkGoes, "cell 0 0 2 1");
@@ -62,7 +63,7 @@ public class MainWindow {
 		textField.setColumns(10);
 		
 		final JProgressBar progressBar = new JProgressBar();
-		frmSpotifyDownloader.getContentPane().add(progressBar, "cell 0 2 3 1,growx");
+		frmSpotifyDownloader.getContentPane().add(progressBar, "cell 0 4 3 1,growx");
 		
 		final JButton btnNewButton = new JButton("Download");
 		btnNewButton.addActionListener(new ActionListener() {

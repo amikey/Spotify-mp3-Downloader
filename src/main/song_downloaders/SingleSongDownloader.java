@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,7 +28,11 @@ import main.structures.VariableNumberRetryHandler;
 public class SingleSongDownloader implements Runnable {
 	private ArrayList<ListingSource> sources = new ArrayList<ListingSource>();
 	protected SongInfo song;
-	protected String spotifyLink; 
+	protected String spotifyLink;
+	
+	protected final String tempDir = "./temp/";
+	protected final String doneDir = "./Music/";
+	
 	public SingleSongDownloader(String spotifyLink) {
 		this.spotifyLink=spotifyLink;
 	}
@@ -83,67 +89,6 @@ public class SingleSongDownloader implements Runnable {
 		
 		return bestSDL;
 	}
-	public boolean downloadSongToFile(String filepath) { 
-		int timesTried = 0;
-		int maxTries = 5;
-		boolean success = false;
-		SongDownloadListing sdl = null;
-		while (!success && timesTried < maxTries) {
-			try {
-				sdl = popBestDownloadData();
-				//dd is initialized if error is not caught
-				download(filepath, sdl);
-				success = true;
-			} catch (Exception e) {
-				timesTried++;
-				System.out.println("error downloading, trying again: "+song);
-				//e.printStackTrace();
-			}
-		}
-		return success;
-	}
-	
-	//wont be able to show me download progress
-	private void download(String filepath, SongDownloadListing sdl) throws IOException {
-		DefaultHttpClient client = new DefaultHttpClient();
-		VariableNumberRetryHandler retryHandler = new VariableNumberRetryHandler(3);
-		client.setHttpRequestRetryHandler(retryHandler);
-		HttpResponse response = client.execute(sdl.request.httpRequest, sdl.request.httpContext);
-		InputStream in = response.getEntity().getContent();
-		download(filepath, in);
-	}
-	private void download(String filepath, InputStream input) throws IOException {
-		File f=new File(filepath);
-		//f.getParentFile().mkdirs(); //TODO this line will add folders that dont exist, but will crash if no folders needed
-		OutputStream out=new FileOutputStream(f);
-		byte buf[]=new byte[1024];
-		int len;
-		
-		while((len=input.read(buf))>0) {
-			out.write(buf,0,len);
-		}
-		out.close();
-		input.close();
-	}
-	private void download(String filepath, InputStream input, int size) throws IOException {
-		File f=new File(filepath);
-		//f.getParentFile().mkdirs(); //TODO this line will add folders that dont exist, but will crash if no folders needed
-		OutputStream out=new FileOutputStream(f);
-		byte buf[]=new byte[1024];
-		int len;
-		
-		int maxCopyTimes = size/1024; 
-		int copyTime = 0;
-				
-		while((len=input.read(buf))>0) {
-			out.write(buf,0,len);
-			double percentage = (double)copyTime / maxCopyTimes * 100;
-			setCurrProgress(percentage);
-		}
-		out.close();
-		input.close();
-	}
-	protected void setCurrProgress(double percentage) {}
 	
 	//Bullet proof data collection from Spotify
 	public static SongInfo getSongDataForSpotifyURLWithTries(int maxTimes, String url) throws Exception {
@@ -180,10 +125,94 @@ public class SingleSongDownloader implements Runnable {
 		//System.out.println(sdh);
 		return new SongInfo(title, album, artist);
 	}
-	
+
+	public boolean downloadSongToFile(String filepath) { 
+		int timesTried = 0;
+		int maxTries = 5;
+		boolean success = false;
+		SongDownloadListing sdl = null;
+		while (!success && timesTried < maxTries) {
+			try {
+				sdl = popBestDownloadData();
+				//dd is initialized if error is not caught
+				download(filepath, sdl);
+				success = true;
+			} catch (Exception e) {
+				timesTried++;
+				System.out.println("error downloading, trying again: "+song);
+				e.printStackTrace();
+			}
+		}
+		return success;
+	}
+	private void download(String filepath, SongDownloadListing sdl) throws IOException {
+		//set up
+		DefaultHttpClient client = new DefaultHttpClient();
+		VariableNumberRetryHandler retryHandler = new VariableNumberRetryHandler(3);
+		client.setHttpRequestRetryHandler(retryHandler);
+		//do stuff
+		HttpResponse response = client.execute(sdl.request.httpRequest, sdl.request.httpContext);
+		HttpEntity entity = response.getEntity();
+		long contentSize = entity.getContentLength();
+		if (contentSize/1024/1024 > 11 || contentSize/1024/1024 < 1) {
+			throw new IOException("NOT RIGHT SIZE PROB FAKE");
+		}
+		InputStream in = entity.getContent();
+		download(filepath, in);
+		//clean up
+		EntityUtils.consume(entity);
+		sdl.request.httpRequest.releaseConnection();
+	}
+	private void download(String filepath, InputStream input) throws IOException {
+		File f=new File(filepath);
+		//f.getParentFile().mkdirs(); //TODO this line will add folders that dont exist, but will crash if no folders needed
+		OutputStream out=new FileOutputStream(f);
+		byte buf[]=new byte[1024];
+		int len;
+		while((len=input.read(buf))>0) {
+			out.write(buf,0,len);
+		}
+		out.close();
+		input.close();
+	}
+//	private void download(String filepath, InputStream input, int size) throws IOException {
+//		File f=new File(filepath);
+//		//f.getParentFile().mkdirs(); //TODO this line will add folders that dont exist, but will crash if no folders needed
+//		OutputStream out=new FileOutputStream(f);
+//		byte buf[]=new byte[1024];
+//		int len;
+//		
+//		int maxCopyTimes = size/1024; 
+//		int copyTime = 0;
+//				
+//		while((len=input.read(buf))>0) {
+//			out.write(buf,0,len);
+//			double percentage = (double)copyTime / maxCopyTimes * 100;
+//			setCurrProgress(percentage);
+//		}
+//		out.close();
+//		input.close();
+//	}
+	protected void setCurrProgress(double percentage) {}
+		
 	public void successfulDownload() {}
 	public void failedDownload() {}
-	
+
+	protected void moveFile(String oldLocation, String newLocation) {
+		File file = new File(oldLocation);
+		moveFile(file, newLocation);
+	}
+	protected void moveFile(File file, String newLocation) {
+		try{
+			if(file.renameTo(new File(newLocation + file.getName()))){
+				System.out.println("File is moved successful!");
+			} else {
+				System.out.println("File is failed to move!");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	protected String createFilename(String directory, SongInfo song) {
 		String basic = (song.artist + "-" + song.album + "-" + song.title + ".mp3");
 		String encoded = basic.replaceAll("/", "-");
@@ -195,9 +224,13 @@ public class SingleSongDownloader implements Runnable {
 		try {
 			initializeSources();
 			populateListingSources();
-			String filename = createFilename("./Music/", song);
-			boolean success = downloadSongToFile(filename);
-			if (success) successfulDownload();
+			String tempFilename = createFilename(tempDir, song);
+			String doneFilename = createFilename(doneDir, song);
+			boolean success = downloadSongToFile(tempFilename);
+			if (success) {
+				moveFile(tempFilename, doneFilename);
+				successfulDownload();
+			}
 			else failedDownload();
 		} catch (Exception e) {
 			failedDownload();

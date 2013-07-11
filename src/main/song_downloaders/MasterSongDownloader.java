@@ -1,7 +1,12 @@
 package main.song_downloaders;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import main.structures.SongInfo;
@@ -12,17 +17,22 @@ import java.util.concurrent.Executors;
 public class MasterSongDownloader {
 	ConcurrentLinkedQueue<String> spotifyLinkQueue = new ConcurrentLinkedQueue<String>();
 	ExecutorService executor;
-	String filepath;
+	String songsListFilepath;
 	int numDone = 0;
-	public MasterSongDownloader(String filepath, int maxConcurrentDownloads) {
-		this.filepath = filepath;
+	File logFile;
+	public MasterSongDownloader(String songsListFilepath, String logFilepath, int maxConcurrentDownloads) {
+		this.songsListFilepath = songsListFilepath;
+		logFile = new File(logFilepath);
+		if (logFile.exists()){
+			logFile.delete();
+		}		
 		executor = Executors.newFixedThreadPool(maxConcurrentDownloads);
 	}
 
 	public void queueAllSpotifyLinks() {
 		Scanner scanner;
 		try {
-			scanner = new Scanner(new File(filepath));
+			scanner = new Scanner(new File(songsListFilepath));
 		} catch (FileNotFoundException e) {
 			return;
 		}
@@ -56,6 +66,21 @@ public class MasterSongDownloader {
 		numDone++;
 		System.out.print("("+numDone+"), ");
 		System.out.println("FAILED to download: " + songString);
+		try {
+			FileWriter fstream = new FileWriter(logFile, true);
+	        BufferedWriter out = new BufferedWriter(fstream);
+	        out.write(songString);
+	        out.newLine();
+	        out.close();
+	        fstream.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void startDownloadingAllSongs() {
