@@ -1,7 +1,6 @@
 package main.structures;
 
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.protocol.HttpContext;
 
 public class DownloadRequest {

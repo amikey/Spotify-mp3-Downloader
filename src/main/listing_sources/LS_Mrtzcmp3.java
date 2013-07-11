@@ -8,8 +8,6 @@ import java.util.NoSuchElementException;
 import main.structures.DownloadRequest;
 import main.structures.SongInfo;
 
-import org.apache.http.client.methods.HttpRequestBase;
-import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

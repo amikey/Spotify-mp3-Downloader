@@ -16,14 +16,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import main.listing_sources.LS_Dilandau;
 import main.listing_sources.LS_MP3Juices;
 import main.listing_sources.LS_MP3Skull;
+import main.listing_sources.LS_SearchMP3_Mobi;
 import main.listing_sources.ListingSource;
 import main.structures.MultipleTry;
 import main.structures.SongDownloadListing;
 import main.structures.SongInfo;
 import main.structures.VariableNumberRetryHandler;
+import main.structures.SpaceRedirectHandler;
 
 public class SingleSongDownloader implements Runnable {
 	private ArrayList<ListingSource> sources = new ArrayList<ListingSource>();
@@ -47,10 +48,13 @@ public class SingleSongDownloader implements Runnable {
 //		}
 //		
 
+		ListingSource sdl1 = new LS_SearchMP3_Mobi(song);
+		sources.add(sdl1);
 		ListingSource sdl2 = new LS_MP3Juices(song);
 		sources.add(sdl2);
 		ListingSource sdl3 = new LS_MP3Skull(song);
 		sources.add(sdl3);
+
 
 	}
 	public void populateListingSources() {
@@ -151,11 +155,18 @@ public class SingleSongDownloader implements Runnable {
 		VariableNumberRetryHandler retryHandler = new VariableNumberRetryHandler(3);
 		client.setHttpRequestRetryHandler(retryHandler);
 		//do stuff
+		client.setRedirectHandler(new SpaceRedirectHandler());
 		HttpResponse response = client.execute(sdl.request.httpRequest, sdl.request.httpContext);
 		HttpEntity entity = response.getEntity();
 		long contentSize = entity.getContentLength();
-		if (contentSize/1024/1024 > 11 || contentSize/1024/1024 < 1) {
-			throw new IOException("NOT RIGHT SIZE PROB FAKE");
+		if (contentSize != -1) {
+			if (contentSize/1024/1024 > 11 || contentSize/1024/1024 < 1) {
+				System.out.println("content size was: " + contentSize/1024/1024);
+				throw new IOException("NOT RIGHT SIZE PROB FAKE");
+			}
+		}
+		else {
+			System.out.println("size of file is unknown");
 		}
 		InputStream in = entity.getContent();
 		download(filepath, in);
@@ -225,10 +236,10 @@ public class SingleSongDownloader implements Runnable {
 			initializeSources();
 			populateListingSources();
 			String tempFilename = createFilename(tempDir, song);
-			String doneFilename = createFilename(doneDir, song);
+			//String doneFilename = createFilename(doneDir, song);
 			boolean success = downloadSongToFile(tempFilename);
 			if (success) {
-				moveFile(tempFilename, doneFilename);
+				moveFile(tempFilename, doneDir);
 				successfulDownload();
 			}
 			else failedDownload();
