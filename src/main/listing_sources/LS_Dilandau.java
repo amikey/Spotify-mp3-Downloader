@@ -25,7 +25,20 @@ public class LS_Dilandau extends ListingSource {
 	public LS_Dilandau(SongInfo song) {
 		super(song);
 	}
-
+	
+	@Override
+	Elements getCells(Document page) throws IOException {
+		Elements cellsWithFiller = page.select("table tbody tr");
+		Elements cells = new Elements();
+		for (int i=0; i<cellsWithFiller.size(); i++) {
+			Element cell = cellsWithFiller.get(i);
+			Elements listingFields = cell.select("td");
+			if (listingFields.size() > 3) {
+				cells.add(cell);
+			}
+		}
+		return cells;
+	}
 	
 	@Override
 	String getInitURLForSong(SongInfo song) throws Exception {
@@ -33,26 +46,6 @@ public class LS_Dilandau extends ListingSource {
 		String urlEncoded = URLEncoder.encode(temp, "UTF-8");
 		String songString = urlEncoded.replaceAll("\\+", "%20");
 		return BASE_URL+songString+URL_END;
-	}
-
-	@Override
-	int getTotalCells(Document page) throws IOException {
-		Elements downloadListingsWithFiller = page.select("table tbody tr");
-		int size = downloadListingsWithFiller.size();
-		return size;
-	}
-
-	@Override
-	Element getCell(Document page, int index) throws NoSuchElementException, IOException {
-		Elements downloadListingsWithFiller = page.select("table tbody tr");
-		Element cell = downloadListingsWithFiller.get(index);
-		Elements listingFields = cell.select("td");
-		if (listingFields.size() > 3) {
-			return cell;
-		}
-		else {
-			throw new NoSuchElementException();
-		}
 	}
 
 	@Override
@@ -73,6 +66,5 @@ public class LS_Dilandau extends ListingSource {
 		
 		return genericDownloadRequest(downloadURL);
 	}
-	
 
 }

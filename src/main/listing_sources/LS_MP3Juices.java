@@ -18,19 +18,13 @@ public class LS_MP3Juices extends ListingSource {
 	public LS_MP3Juices(SongInfo song) {
 		super(song);
 	}
-
+	
 	@Override
-	int getTotalCells(Document page) throws IOException {
+	Elements getCells(Document page) throws IOException {
 		Elements cells = page.select(".search_container > table tr.mpres");
-		return cells.size();
+		return cells;
 	}
-
-	@Override
-	Element getCell(Document page, int index) throws NoSuchElementException, IOException {
-		Elements cells = page.select(".search_container > table tr.mpres");
-		return cells.get(index);
-	}
-
+	
 	@Override
 	String getListingID(Element cell) throws IOException {
 		String listingID = cell.select(".song_title").get(0).text();
@@ -50,19 +44,5 @@ public class LS_MP3Juices extends ListingSource {
 		songString = songString.replaceAll(" ", "-");
 		return BASE_URL + songString + URL_END;
 	}
-
-	
-//	public static void main(String[] args) {
-//		System.out.println("just a small test");
-//		ListingSource ls = new LS_MP3Juices(null);
-//		try {
-//			Document doc = ls.loadPage("http://mp3juices.com/search/3oh!3");
-//			ls.getTotalCells(doc);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//	}
 	
 }

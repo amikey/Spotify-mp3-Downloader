@@ -1,5 +1,6 @@
 package main.song_downloaders;
 
+import java.awt.datatransfer.MimeTypeParseException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -156,9 +157,15 @@ public class SingleSongDownloader implements Runnable {
 		client.setHttpRequestRetryHandler(retryHandler);
 		//do stuff
 		client.setRedirectHandler(new SpaceRedirectHandler());
+		
 		HttpResponse response = client.execute(sdl.request.httpRequest, sdl.request.httpContext);
 		HttpEntity entity = response.getEntity();
 		long contentSize = entity.getContentLength();
+		String contentType = entity.getContentType().getValue();
+		if (!contentType.equals("audio/mpeg")) {
+			System.out.print("invalide MIME type: "+contentType);
+			throw new IOException("Wrong MIME Type, probably HTML");
+		}
 		if (contentSize != -1) {
 			if (contentSize/1024/1024 > 11 || contentSize/1024/1024 < 1) {
 				System.out.println("content size was: " + contentSize/1024/1024);
@@ -186,24 +193,7 @@ public class SingleSongDownloader implements Runnable {
 		out.close();
 		input.close();
 	}
-//	private void download(String filepath, InputStream input, int size) throws IOException {
-//		File f=new File(filepath);
-//		//f.getParentFile().mkdirs(); //TODO this line will add folders that dont exist, but will crash if no folders needed
-//		OutputStream out=new FileOutputStream(f);
-//		byte buf[]=new byte[1024];
-//		int len;
-//		
-//		int maxCopyTimes = size/1024; 
-//		int copyTime = 0;
-//				
-//		while((len=input.read(buf))>0) {
-//			out.write(buf,0,len);
-//			double percentage = (double)copyTime / maxCopyTimes * 100;
-//			setCurrProgress(percentage);
-//		}
-//		out.close();
-//		input.close();
-//	}
+
 	protected void setCurrProgress(double percentage) {}
 		
 	public void successfulDownload() {}

@@ -10,40 +10,27 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolException;
 import org.apache.http.client.CircularRedirectException;
+import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.utils.URIUtils;
-import org.apache.http.impl.client.DefaultRedirectHandler;
 import org.apache.http.impl.client.RedirectLocations;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 
-public class SpaceRedirectHandler extends DefaultRedirectHandler{
+public class MyRedirectStrategy implements RedirectStrategy {
 
-    private static final String REDIRECT_LOCATIONS = "http.protocol.redirect-locations";
+	private static final String REDIRECT_LOCATIONS = "http.protocol.redirect-locations";
+	
+	public MyRedirectStrategy() {
+		super();
+	}
 
-    public SpaceRedirectHandler() {
-        super();
-    }
-
-    public boolean isRedirectRequested(final HttpResponse response, final HttpContext context) {
-        if (response == null) {
-            throw new IllegalArgumentException("HTTP response may not be null");
-        }
-        int statusCode = response.getStatusLine().getStatusCode();
-        switch (statusCode) {
-        case HttpStatus.SC_MOVED_TEMPORARILY:
-        case HttpStatus.SC_MOVED_PERMANENTLY:
-        case HttpStatus.SC_SEE_OTHER:
-        case HttpStatus.SC_TEMPORARY_REDIRECT:
-            return true;
-        default:
-            return false;
-        } //end of switch
-    }
-
-    public URI getLocationURI(final HttpResponse response, final HttpContext context) throws ProtocolException {
-        if (response == null) {
+	@Override
+	public HttpUriRequest getRedirect(HttpRequest old_request, HttpResponse response, HttpContext context) throws ProtocolException {
+		if (response == null) {
             throw new IllegalArgumentException("HTTP response may not be null");
         }
         //get the location header to find out where to redirect to
@@ -54,7 +41,7 @@ public class SpaceRedirectHandler extends DefaultRedirectHandler{
                     "Received redirect response " + response.getStatusLine()
                     + " but no location header");
         }
-//HERE IS THE MODIFIED LINE OF CODE
+        //HERE IS THE MODIFIED LINE OF CODE
         String location = locationHeader.getValue().replaceAll (" ", "%20");
 
         URI uri;
@@ -124,7 +111,25 @@ public class SpaceRedirectHandler extends DefaultRedirectHandler{
                 redirectLocations.add(redirectURI);
             }
         }
+        HttpGet get = new HttpGet(uri);
+        return get;
+	}
 
-        return uri;
-    }
+	@Override
+	public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
+		if (response == null) {
+            throw new IllegalArgumentException("HTTP response may not be null");
+        }
+        int statusCode = response.getStatusLine().getStatusCode();
+        switch (statusCode) {
+        case HttpStatus.SC_MOVED_TEMPORARILY:
+        case HttpStatus.SC_MOVED_PERMANENTLY:
+        case HttpStatus.SC_SEE_OTHER:
+        case HttpStatus.SC_TEMPORARY_REDIRECT:
+            return true;
+        default:
+            return false;
+        } //end of switch
+	}
+
 }

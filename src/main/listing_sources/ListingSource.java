@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import main.structures.BinaryHeap;
 import main.structures.DownloadRequest;
@@ -39,7 +40,6 @@ public abstract class ListingSource {
 	public static String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31";
 	protected SongInfo song;
 	public BinaryHeap<SongDownloadListing> downloadListingHeap = new BinaryHeap<SongDownloadListing>();
-	
 	protected HttpContext httpContext;
 	
 	public ListingSource(SongInfo song) {
@@ -53,13 +53,13 @@ public abstract class ListingSource {
 	
 	public void generateListings() throws Exception{
 		Document page = null;
-		int num_cells = 0;
+		Elements cells = null;
 		String initURL = getInitURLForSong(song);
 		page = loadPage(initURL);
-		num_cells = getTotalCells(page);
-		for (int i=0; i<num_cells; i++) {
+		cells = getCells(page);
+		for (int i=0; i<cells.size(); i++) {
 			try {
-				Element cell = getCell(page, i);
+				Element cell = cells.get(i);
 				String listingID = getListingID(cell);
 				DownloadRequest req = getDownloadRequest(cell);
 				SongDownloadListing sdl = new SongDownloadListing(song, listingID, req);
@@ -92,8 +92,7 @@ public abstract class ListingSource {
 		return doc;
 	}
 	
-	abstract int getTotalCells(Document page) throws IOException;
-	abstract Element getCell(Document page, int index) throws NoSuchElementException, IOException;
+	abstract Elements getCells(Document page) throws IOException;
 	abstract String getListingID(Element cell) throws IOException;
 	abstract DownloadRequest getDownloadRequest(Element cell) throws IOException, URISyntaxException;
 	abstract String getInitURLForSong(SongInfo song) throws Exception;

@@ -39,6 +39,9 @@ public class MasterSongDownloader {
 			if (!spotifySongURL.substring(24, 29).equals("local")) {
 				spotifyLinkQueue.offer(spotifySongURL);
 			}
+			else {
+				failedDownload(spotifySongURL, null);
+			}
 		}
 	}
 	public void createAndExecuteThreads() {

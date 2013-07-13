@@ -23,26 +23,18 @@ public class LS_MP3Skull extends ListingSource {
 		super(song);
 		//COMBINED_URL = "http://mp3skull.com/mp3/my_chemical_romance_helena.html";
 	}
+	
+	@Override
+	Elements getCells(Document page) throws IOException {
+		Elements cells = page.select("#song_html");
+		return cells;
+	}
 
 	@Override
 	String getInitURLForSong(SongInfo song) {
 		String temp = song.artist+"_"+ song.title;
 		String songString = temp.replaceAll(" ", "_");
 		return BASE_URL + songString + URL_END;		
-	}
-
-	@Override
-	int getTotalCells(Document page) throws IOException {
-		Elements cells = page.select("#song_html");
-		int size = cells.size();
-		return size;
-	}
-
-	@Override
-	Element getCell(Document page, int index) throws NoSuchElementException, IOException {
-		Elements cells = page.select("#song_html");
-		Element cell = cells.get(index);
-		return cell;
 	}
 
 	@Override

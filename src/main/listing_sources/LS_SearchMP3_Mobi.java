@@ -22,18 +22,11 @@ public class LS_SearchMP3_Mobi extends ListingSource {
 	}
 
 	@Override
-	int getTotalCells(Document page) throws IOException {
+	Elements getCells(Document page) throws IOException {
 		Elements cells = page.select(".wrapper ul li");
-		return cells.size();
+		return cells;
 	}
-
-	@Override
-	Element getCell(Document page, int index) throws NoSuchElementException,
-			IOException {
-		Elements cells = page.select(".wrapper ul li");
-		return cells.get(index);
-	}
-
+	
 	@Override
 	String getListingID(Element cell) throws IOException {
 		return cell.text().trim();

@@ -87,7 +87,9 @@ public class PlayListDownloaderWindow {
 				String playlistFileLocation = playlistFileTextField.getText();
 				String logFileLocation = logFileTextField.getText();
 				int concurrentDownloads = 10;
-				
+				if (logFileLocation.isEmpty()) {
+					logFileLocation = playlistFileLocation.replaceFirst(".txt", "--LOG.txt"); 
+				}
 				MasterSongDownloader_GUI msd = new MasterSongDownloader_GUI(self, playlistFileLocation, logFileLocation, concurrentDownloads);
 				Thread t = new Thread(msd);
 				t.start();
