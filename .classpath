@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/httpcore-4.2.4.jar"/>
 	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-codec-1.6.jar"/>
 	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/Manu/Documents/workspace/SpotifyPlaylistDownloader/libraries/jid3lib-0.5.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

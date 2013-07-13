@@ -12,6 +12,14 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.farng.mp3.AbstractMP3Tag;
+import org.farng.mp3.MP3File;
+import org.farng.mp3.TagConstant;
+import org.farng.mp3.TagException;
+import org.farng.mp3.TagOptionSingleton;
+import org.farng.mp3.id3.AbstractID3v2;
+import org.farng.mp3.id3.ID3v1;
+import org.farng.mp3.id3.ID3v2_2;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -96,7 +104,7 @@ public class SingleSongDownloader implements Runnable {
 	}
 	
 	//Bullet proof data collection from Spotify
-	public static SongInfo getSongDataForSpotifyURLWithTries(int maxTimes, String url) throws Exception {
+	protected final static SongInfo getSongDataForSpotifyURLWithTries(int maxTimes, String url) throws Exception {
 		//SpotifyDownloader sd = new SpotifyDownloader();
 		Object[] input = {url};
 		SongInfo sdh;
@@ -110,7 +118,7 @@ public class SingleSongDownloader implements Runnable {
 		sdh = mt.getData();
 		return sdh;
 	}
-	private static SongInfo getSongDataForSpotifyURL(String url) throws IOException {
+	protected final static SongInfo getSongDataForSpotifyURL(String url) throws IOException {
 		Document doc = Jsoup.connect(url).get();
 		//title
 		Elements tempTitleElems = doc.select("h1[itemprop=name]");
@@ -193,17 +201,55 @@ public class SingleSongDownloader implements Runnable {
 		out.close();
 		input.close();
 	}
-
+	
+	protected final void setSongMetaData(String filename) throws IOException, TagException {
+		setSongMetaData(this.song, filename);
+	}
+	protected final void setSongMetaData(File f) throws IOException, TagException {
+		setSongMetaData(this.song, f);
+	}
+	protected final void setSongMetaData(SongInfo song, String filename) throws IOException, TagException {
+		File f = new File(filename);
+		setSongMetaData(song, f);
+	}
+	protected final void setSongMetaData(SongInfo song, File f) throws IOException, TagException {
+		MP3File mp3file = new MP3File(f);
+	    //TagOptionSingleton.getInstance().setDefaultSaveMode(TagConstant.MP3_FILE_SAVE_OVERWRITE);
+	    AbstractMP3Tag tag;
+	    if (mp3file.hasID3v1Tag()) {
+	    	tag = new ID3v1();
+	    	tag.setSongTitle(song.title);
+	    	tag.setAlbumTitle(song.album);
+	    	tag.setLeadArtist(song.artist);
+	    	//ID3v1 t = new ID3v1();
+	    	mp3file.setID3v1Tag(tag);
+	    }
+	    if (mp3file.hasID3v2Tag()) {
+	    	//tag = mp3file.getID3v2Tag();
+	    	tag = new ID3v2_2();
+	    	tag.setSongTitle(song.title);
+	    	tag.setAlbumTitle(song.album);
+	    	tag.setLeadArtist(song.artist);
+	    	mp3file.setID3v2Tag(tag);
+	    }
+	    if (mp3file.hasLyrics3Tag()) {
+	    	tag = mp3file.getLyrics3Tag();
+	    	tag.setSongLyric("");
+	    	mp3file.setLyrics3Tag(tag);
+	    }
+	    mp3file.save();
+	}
+	
 	protected void setCurrProgress(double percentage) {}
 		
 	public void successfulDownload() {}
 	public void failedDownload() {}
 
-	protected void moveFile(String oldLocation, String newLocation) {
+	protected final void moveFile(String oldLocation, String newLocation) {
 		File file = new File(oldLocation);
 		moveFile(file, newLocation);
 	}
-	protected void moveFile(File file, String newLocation) {
+	protected final void moveFile(File file, String newLocation) {
 		try{
 			if(file.renameTo(new File(newLocation + file.getName()))){
 				System.out.println("File is moved successful!");
@@ -229,6 +275,7 @@ public class SingleSongDownloader implements Runnable {
 			//String doneFilename = createFilename(doneDir, song);
 			boolean success = downloadSongToFile(tempFilename);
 			if (success) {
+				setSongMetaData(tempFilename);
 				moveFile(tempFilename, doneDir);
 				successfulDownload();
 			}
@@ -236,5 +283,10 @@ public class SingleSongDownloader implements Runnable {
 		} catch (Exception e) {
 			failedDownload();
 		}
+	}
+
+	public static void main(String[] args) {
+		
+		
 	}
 }
